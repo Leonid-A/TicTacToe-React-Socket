@@ -1,0 +1,13 @@
+.login {
+  margin-top: 25px;
+}
+
+.button{
+    background-color: green;
+    border-radius: 15px;
+    cursor: pointer;
+    width: 100px;
+    height: 25px;
+    margin: 5px auto;
+    padding: 3px;
+}

@@ -1,0 +1,5 @@
+[0107/232351.221:ERROR:directory_reader_win.cc(43)] FindFirstFile: The system cannot find the path specified. (0x3)
+[0112/000226.415:ERROR:directory_reader_win.cc(43)] FindFirstFile: The system cannot find the path specified. (0x3)
+[0114/203118.935:ERROR:directory_reader_win.cc(43)] FindFirstFile: The system cannot find the path specified. (0x3)
+[0114/203119.007:ERROR:filesystem_win.cc(129)] GetFileAttributes C:\Users\Lyonik\AppData\Local\AVAST Software\Browser\User Data\Crashpad\attachments\93ff1f32-6f2e-4a7b-9995-b5ffc0902222: The system cannot find the path specified. (0x3)
+[0114/212059.418:ERROR:directory_reader_win.cc(43)] FindFirstFile: The system cannot find the path specified. (0x3)

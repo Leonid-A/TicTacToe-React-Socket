@@ -1,0 +1,33 @@
+.houseBlock {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+  }
+  
+  .home {
+    height: 200px;
+    width: 200px;
+    background-color: red;
+    border-radius: 15px;
+  }
+  
+  .room {
+    height: 200px;
+    width: 200px;
+    overflow: hidden;
+    background-color: blue;
+    border-radius: 20%;
+    margin: 5px;
+    cursor: pointer;
+    color: white;
+    padding-top: 10px;
+  }
+
+  .homeButton {
+    cursor: pointer;
+    background-color: yellow;
+    width: 80px;
+    border-radius: 5px;
+    margin: 100px auto 0;
+  }
