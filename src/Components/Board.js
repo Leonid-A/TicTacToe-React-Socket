@@ -11,29 +11,32 @@ function Board(props) {
   const [squares, setSquares] = useState(gameData.squares);
   const [status, setStatus] = useState(null);
   const { playerType } = props.location;
+  const [players, setPlayers] = useState({
+    player1: gameData.player1,
+    player2: gameData.player2,
+  });
 
   useEffect(() => {
-    appSocket.on(socketEvents.gameUpdated, (resp) => {
-      console.log(resp)
-      // const filtRooms = rooms.filter((item) => {
-      //   return item._id != id;
-      // });
-      // setRooms(filtRooms);
+    appSocket.on(socketEvents.gameUpdated, (res) => {
+      setPlayers({
+        player1: res.player1,
+        player2: res.player2,
+      });
+      setSquares(res.squares);
     });
 
-    console.log('registering listener')
     appSocket.on(socketEvents.userEntered, (res) => {
-      console.log(11111111,res);
+      setPlayers({
+        player1: res.player1,
+        player2: res.player2,
+      });
     });
 
     appSocket.on(socketEvents.clickedSquare, (res) => {
-      console.log(res.winner)
-
-      if (res.winner){
+      if (res.winner) {
         setStatus(res.winner);
       }
-      console.log('res', res)
-      setSquares(res.squares)
+      setSquares(res.squares);
     });
 
     return () => {
@@ -49,9 +52,6 @@ function Board(props) {
 
   const { size, id } = useParams();
 
-
-
-
   const renderSquare = (i) => {
     return (
       <Square key={i} value={squares[i].value} onClick={() => handleClick(i)} />
@@ -59,26 +59,22 @@ function Board(props) {
   };
 
   const handleClick = async (i) => {
-
     if (squares[i].value || status) {
       return;
     }
 
     // squares[i].value = status.xIsNext ? "X" : "O";
     // const winner = checkWinner(i, squares, props.value);
-    const body = { id: gameData._id, i, type: playerType};
+    const body = { id: gameData._id, i, type: playerType };
     makeSocketCall(body);
   };
 
   const makeSocketCall = (data) => {
     appSocket.emit(socketEvents.clickedSquare, data, (res) => {
-      console.log(res.winner)
-      if (res.winner){
+      if (res.winner) {
         setStatus(res.winner);
       }
-      console.log('res_c', res)
-      setSquares(res.squares)
-
+      setSquares(res.squares);
     });
   };
 
@@ -94,8 +90,6 @@ function Board(props) {
   //   resetGame();
   // }, [size]); // eslint-disable-line react-hooks/exhaustive-deps
 
-
-
   const style = {
     width: 50 * size + "px",
     height: 50 * size + "px",
@@ -104,15 +98,15 @@ function Board(props) {
   return (
     <>
       <div>
-        <p>Player1+: {gameData.player1 ? gameData.player1.userName : null}</p> 
-        <p>Player2+: {gameData.player2 ? gameData.player2.userName : null}</p>
+        <p>Player1+: {players.player1 ? players.player1.userName : null}</p>
+        <p>Player2+: {players.player2 ? players.player2.userName : null}</p>
       </div>
       <div style={style} className="game-block">
         {squares.map((item, index) => renderSquare(index))}
       </div>
       <div className="center">
         {/* <Button class="green" clicked={resetGame} text="RESET" /> */}
-        <p id="info">{status? `${status} is Win` : status}</p>
+        <p id="info">{status ? `${status} is Win` : status}</p>
       </div>
     </>
   );

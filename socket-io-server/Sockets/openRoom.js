@@ -7,8 +7,7 @@ const {
   socketEvents,
 } = require("../constants");
 
-function openRoom(socket, data, callBack) {
-  console.log("12345678-open", data.id);
+function openRoom(io, socket, data, callBack) {
   dbClient.connect(async (err, client) => {
     const db = client.db(dbName);
     const roomsCol = db.collection("rooms");
@@ -36,10 +35,12 @@ function openRoom(socket, data, callBack) {
         await roomsCol.updateOne(findID, {
           $set: updatedObj,
         });
-        
-        console.log("abcdef", gameData);
+
+        socket.broadcast.emit(socketEvents.gameUpdated, gameData);
+
         socket.join(data.id);
         socket.to(data.id).emit(socketEvents.userEntered, gameData);
+
         callBack(gameData, userType);
       } catch (error) {
         console.log("something went wrong");

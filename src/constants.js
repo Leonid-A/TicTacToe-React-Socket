@@ -7,7 +7,6 @@ export const appSocket = socketIOClient(ENDPOINT);
 export const socketEvents = {
     connected: "connected",
     clickedSquare: "clickedSquare",
-    gameStatus: "gameStatus",
     createRoom: "createRoom",
     roomIsMade: "roomIsMade",
     getAllRooms: "getAllRooms",

@@ -6,17 +6,14 @@ import { useEffect, useState } from "react";
 
 import { appSocket, socketEvents } from "./constants";
 
-
-
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    appSocket.on(socketEvents.connected, data => {
-    });
+    appSocket.on(socketEvents.connected, (data) => {});
 
     const currentUser = localStorage.getItem("userName");
-    setIsLoggedIn(currentUser ? true : false)
+    setIsLoggedIn(currentUser ? true : false);
 
     // CLEAN UP THE EFFECT
     return () => appSocket.disconnect();
@@ -27,10 +24,6 @@ function App() {
     // use name
     setIsLoggedIn(true);
   };
-
-  //save user in storage,
-
-  //create new room button,
 
   return (
     <BrowserRouter>

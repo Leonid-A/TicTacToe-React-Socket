@@ -35,7 +35,11 @@ function HomeBlock() {
   };
 
   const renderCreatedRoom = (data) => {
-    setRooms([
+    setRooms([renderOneRoom(data), ...rooms]);
+  };
+
+  const renderOneRoom = (data) => {
+    return (
       <Room
         key={data._id}
         id={data._id}
@@ -44,9 +48,8 @@ function HomeBlock() {
         player2={data.player2}
         player1={data.player1}
         click={() => handleRoomClick(data)}
-      />,
-      ...rooms,
-    ]);
+      />
+    );
   };
 
   const handleRoomClick = (props) => {
@@ -64,30 +67,11 @@ function HomeBlock() {
   };
 
   useEffect(() => {
-    appSocket.on(socketEvents.gameDeleted, (id) => {
-      const filtRooms = rooms.filter((item) => {
-        return item._id != id;
-      });
-      setRooms(filtRooms);
-    });
-
-    appSocket.on(socketEvents.gameUpdated, (resp) => {
-      console.log(resp)
-      // const filtRooms = rooms.filter((item) => {
-      //   return item._id != id;
-      // });
-      // setRooms(filtRooms);
-    });
-
     appSocket.emit(socketEvents.getAllRooms, null, (response) => {
       setRooms(roomsRender(response));
     });
 
-    return () => {
-      appSocket.removeAllListeners(socketEvents.gameDeleted);
-      appSocket.removeAllListeners(socketEvents.gameUpdated);
-
-    };
+    return () => {};
   }, []);
 
   useEffect(() => {
@@ -100,11 +84,34 @@ function HomeBlock() {
   }, [rooms, filteredSize]);
 
   useEffect(() => {
-    appSocket.removeAllListeners(socketEvents.roomIsMade);
+    removeListeners();
     appSocket.on(socketEvents.roomIsMade, (response) => {
       renderCreatedRoom(response);
     });
+
+    appSocket.on(socketEvents.gameDeleted, (id) => {
+      const filtRooms = rooms.filter((item) => item.props.id !== id);
+      setRooms(filtRooms);
+    });
+
+    appSocket.on(socketEvents.gameUpdated, (resp) => {
+      const updatedRooms = rooms.map((item) => {
+        if (item.props.id === resp._id) {
+          item = renderOneRoom(resp);
+        }
+        return item;
+      });
+      setRooms(updatedRooms);
+    });
+
+    return () => removeListeners();
   }, [rooms]);
+
+  const removeListeners = () => {
+    appSocket.removeAllListeners(socketEvents.roomIsMade);
+    appSocket.removeAllListeners(socketEvents.gameDeleted);
+    appSocket.removeAllListeners(socketEvents.gameUpdated);
+  };
 
   const handleCreateRoom = () => {
     const roomData = {

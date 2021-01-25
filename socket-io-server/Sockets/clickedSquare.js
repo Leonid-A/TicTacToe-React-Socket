@@ -22,21 +22,27 @@ function clickedSquare(socket, data, callBack) {
       } else if (!gameData.xIsNext && data.type === playerTypes.O) {
         value = playerTypes.O;
       } else {
-        return
+        return;
       }
 
-      
       gameData.squares[data.i].value = value;
       gameData.xIsNext = !gameData.xIsNext;
+      gameData.winner = checkWinner(data.i, gameData.squares, gameData.size);
+
+      if (gameData.winner) {
+        gameData.status = gameStatus.over;
+        socket.broadcast.emit(socketEvents.gameUpdated, gameData);
+      }
+
       await roomsCol.updateOne(findID, {
         $set: {
           squares: gameData.squares,
           xIsNext: gameData.xIsNext,
+          status: gameData.status,
         },
       });
 
       socket.join(data.id);
-      gameData.winner = checkWinner(data.i, gameData.squares, gameData.size);
       socket.to(data.id).emit(socketEvents.clickedSquare, gameData);
       callBack(gameData);
     }

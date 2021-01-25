@@ -32,15 +32,11 @@ const io = socketIo(server, {
 io.on("connection", (socket) => {
   console.log("connected");
 
-  console.log(11111, socket.id);
-
-
-
   socket.on(socketEvents.userExitedBoard, (data) => userExitedBoard(socket, data));
-  socket.on(socketEvents.createRoom, (data, callBack) => createRoom(socket, data, callBack));
-  socket.on(socketEvents.getAllRooms, (data, callBack) => getAllRooms(callBack));
-  socket.on(socketEvents.openRoom, (data, callBack) => openRoom(socket, data, callBack));
+  socket.on(socketEvents.createRoom, (data, callBack) => createRoom(io, socket, data, callBack));
+  socket.on(socketEvents.openRoom, (data, callBack) => openRoom(io, socket, data, callBack));
   socket.on(socketEvents.clickedSquare, (data, callBack) => clickedSquare(socket, data, callBack));
+  socket.on(socketEvents.getAllRooms, (data, callBack) => getAllRooms(callBack));
 
   getApiAndEmit(socket);
 

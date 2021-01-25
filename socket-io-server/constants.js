@@ -4,7 +4,6 @@ const { MongoClient } = mongodb;
 const socketEvents = {
   connected: "connected",
   clickedSquare: "clickedSquare",
-  gameStatus: "gameStatus",
   createRoom: "createRoom",
   roomIsMade: "roomIsMade",
   getAllRooms: "getAllRooms",
@@ -12,8 +11,7 @@ const socketEvents = {
   gameDeleted: "gameDeleted",
   openRoom: "openRoom",
   gameUpdated: "gameUpdated",
-  userEntered: "userEntered"
-
+  userEntered: "userEntered",
 };
 
 const gameStatus = {
@@ -22,7 +20,7 @@ const gameStatus = {
   over: "over",
 };
 
-const playerTypes = { X: "X" , O: "O" }
+const playerTypes = { X: "X", O: "O" };
 
 const mondoDBUser = "tic-tac-toe";
 const dbName = "tic-tac-toe-db";
@@ -38,4 +36,3 @@ module.exports.gameStatus = gameStatus;
 module.exports.MongoUrl = MongoUrl;
 module.exports.mongodb = mongodb;
 module.exports.playerTypes = playerTypes;
-

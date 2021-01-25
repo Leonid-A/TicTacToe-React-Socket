@@ -1,5 +1,4 @@
-import classes from "./Styles/HomeBlock.module.css"
-
+import classes from "./Styles/HomeBlock.module.css";
 
 function Home(props) {
   return (
