@@ -18,7 +18,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   cursor: pointer;
-  margin: 50px auto;
+  margin: 30px auto;
 }
 
 .item {
@@ -35,4 +35,24 @@ body {
 #info{
   font-size: 20px;
   color: red
+}
+
+.button{
+  background-color: red;
+  cursor: pointer;
+}
+
+#startButton{
+  background-color: green;
+  cursor: pointer;
+}
+
+#startButton.passive{
+  background-color: gray;
+  cursor: none;
+  pointer-events: none;
+}
+
+.buttonsBlock{
+  margin-bottom: 15px;
 }

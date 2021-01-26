@@ -12,8 +12,10 @@ const index = require("./routes/index");
 const clickedSquare = require("./Sockets/clickedSquare");
 const createRoom = require("./Sockets/CreateRoom");
 const getAllRooms = require("./Sockets/getAllRooms");
+const startGame = require("./Sockets/startGame");
 const openRoom = require("./Sockets/openRoom");
 const userExitedBoard = require("./Sockets/userExitedBoard");
+const playAgain = require("./Sockets/playAgain");
 
 const app = express();
 app.use(index);
@@ -33,8 +35,10 @@ io.on("connection", (socket) => {
   console.log("connected");
 
   socket.on(socketEvents.userExitedBoard, (data) => userExitedBoard(socket, data));
-  socket.on(socketEvents.createRoom, (data, callBack) => createRoom(io, socket, data, callBack));
-  socket.on(socketEvents.openRoom, (data, callBack) => openRoom(io, socket, data, callBack));
+  socket.on(socketEvents.playAgain, (data) => playAgain(socket, data));
+  socket.on(socketEvents.createRoom, (data, callBack) => createRoom(socket, data, callBack));
+  socket.on(socketEvents.openRoom, (data, callBack) => openRoom(socket, data, callBack));
+  socket.on(socketEvents.startGame, (data, callBack) => startGame(socket, data, callBack));
   socket.on(socketEvents.clickedSquare, (data, callBack) => clickedSquare(socket, data, callBack));
   socket.on(socketEvents.getAllRooms, (data, callBack) => getAllRooms(callBack));
 

@@ -12,6 +12,8 @@ const socketEvents = {
   openRoom: "openRoom",
   gameUpdated: "gameUpdated",
   userEntered: "userEntered",
+  startGame: "startGame",
+  playAgain: "playAgain"
 };
 
 const gameStatus = {

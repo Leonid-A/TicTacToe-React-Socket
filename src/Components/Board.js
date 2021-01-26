@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-// import checkWinner from "../helpers/checkWinner";
+// import { useParams } from "react-router-dom";
 import Square from "./Square.js";
-// import Button from "./Button/Button";
-
 import { appSocket, socketEvents } from "../constants";
 
 function Board(props) {
@@ -15,6 +12,7 @@ function Board(props) {
     player1: gameData.player1,
     player2: gameData.player2,
   });
+  const [gameStarted, SetGameStarted] = useState(false);
 
   useEffect(() => {
     appSocket.on(socketEvents.gameUpdated, (res) => {
@@ -32,6 +30,12 @@ function Board(props) {
       });
     });
 
+    appSocket.on(socketEvents.startGame, (res) => {
+      if (res.status === "playing") {
+        SetGameStarted(true);
+      }
+    });
+
     appSocket.on(socketEvents.clickedSquare, (res) => {
       if (res.winner) {
         setStatus(res.winner);
@@ -41,6 +45,7 @@ function Board(props) {
 
     return () => {
       appSocket.removeAllListeners(socketEvents.userEntered);
+      appSocket.removeAllListeners(socketEvents.startGame);
       appSocket.removeAllListeners(socketEvents.gameUpdated);
       appSocket.removeAllListeners(socketEvents.clickedSquare);
       appSocket.emit(socketEvents.userExitedBoard, {
@@ -48,9 +53,9 @@ function Board(props) {
         userName: localStorage.getItem("userName"),
       });
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { size, id } = useParams();
+  // const { size, id } = useParams();
 
   const renderSquare = (i) => {
     return (
@@ -59,12 +64,10 @@ function Board(props) {
   };
 
   const handleClick = async (i) => {
-    if (squares[i].value || status) {
+    if (squares[i].value || status || !gameStarted) {
       return;
     }
 
-    // squares[i].value = status.xIsNext ? "X" : "O";
-    // const winner = checkWinner(i, squares, props.value);
     const body = { id: gameData._id, i, type: playerType };
     makeSocketCall(body);
   };
@@ -78,21 +81,26 @@ function Board(props) {
     });
   };
 
-  // const resetGame = () => {
-  //   setSquares(fillInfo());
-  //   setStatus({
-  //     status: null,
-  //     xIsNext: true,
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   resetGame();
-  // }, [size]); // eslint-disable-line react-hooks/exhaustive-deps
+  const startButtonClick = (data) => {
+    if (!gameStarted) {
+      data.target.classList.add("passive");
+      const body = { id: gameData._id, type: playerType };
+      appSocket.emit(socketEvents.startGame, body, (game) => {
+        if (game.status === "playing") {
+          SetGameStarted(true);
+        }
+      });
+    }
+  };
+  const resetGame = () => {
+    appSocket.emit(socketEvents.playAgain, gameData._id, (game) => {
+      console.log(game);
+    });
+  };
 
   const style = {
-    width: 50 * size + "px",
-    height: 50 * size + "px",
+    width: 50 * gameData.size + "px",
+    height: 50 * gameData.size + "px",
   };
 
   return (
@@ -104,9 +112,18 @@ function Board(props) {
       <div style={style} className="game-block">
         {squares.map((item, index) => renderSquare(index))}
       </div>
-      <div className="center">
-        {/* <Button class="green" clicked={resetGame} text="RESET" /> */}
+      <div className="buttonsBlock">
         <p id="info">{status ? `${status} is Win` : status}</p>
+
+        {status ? (
+          <button className="button" onClick={resetGame}>
+            RESET GAME
+          </button>
+        ) : players.player1 && players.player2 ? (
+          <button id="startButton" onClick={startButtonClick}>
+            START
+          </button>
+        ) : null}
       </div>
     </>
   );

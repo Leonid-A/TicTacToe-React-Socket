@@ -7,14 +7,14 @@ const {
 } = require("../constants");
 const createBoard = require("../routes/helpers/squares");
 
-function createRoom(io, socket, data, callBack) {
+function createRoom(socket, data, callBack) {
   dbClient.connect((err, client) => {
     const db = client.db(dbName);
 
     try {
       db.collection("rooms").insertOne(
         {
-          player1: { userName: data.userName, type: playerTypes.X },
+          player1: { userName: data.userName, type: playerTypes.X, startGame: false },
           size: data.size,
           squares: createBoard(data.size),
           player2: null,

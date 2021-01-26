@@ -15,4 +15,6 @@ export const socketEvents = {
     gameDeleted: "gameDeleted",
     gameUpdated: "gameUpdated",
     userEntered: "userEntered",
+    startGame: "startGame",
+    playAgain: "playAgain"
 }
