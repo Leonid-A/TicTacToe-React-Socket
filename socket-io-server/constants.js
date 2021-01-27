@@ -13,7 +13,7 @@ const socketEvents = {
   gameUpdated: "gameUpdated",
   userEntered: "userEntered",
   startGame: "startGame",
-  playAgain: "playAgain"
+  playAgain: "playAgain",
 };
 
 const gameStatus = {
@@ -23,7 +23,6 @@ const gameStatus = {
 };
 
 const playerTypes = { X: "X", O: "O" };
-
 const mondoDBUser = "tic-tac-toe";
 const dbName = "tic-tac-toe-db";
 const mondoDBUserPassword = "MewrapRWjGq3wno5";
@@ -32,7 +31,6 @@ const dbClient = new MongoClient(MongoUrl);
 
 module.exports.dbClient = dbClient;
 module.exports.dbName = dbName;
-
 module.exports.socketEvents = socketEvents;
 module.exports.gameStatus = gameStatus;
 module.exports.MongoUrl = MongoUrl;

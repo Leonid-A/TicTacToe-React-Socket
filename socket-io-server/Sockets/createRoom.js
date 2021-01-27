@@ -14,7 +14,11 @@ function createRoom(socket, data, callBack) {
     try {
       db.collection("rooms").insertOne(
         {
-          player1: { userName: data.userName, type: playerTypes.X, startGame: false },
+          player1: {
+            userName: data.userName,
+            type: playerTypes.X,
+            startGame: false,
+          },
           size: data.size,
           squares: createBoard(data.size),
           player2: null,

@@ -1,9 +1,4 @@
 function checkWinner(i, squares, n) {
-  console.log(i)
-  console.log(squares)
-  console.log(n)
-
-
   const { value, x, y } = squares[i];
   const length = squares.length;
   let hor = 1;
@@ -11,7 +6,6 @@ function checkWinner(i, squares, n) {
   let diagR = 1;
   let diagL = 1;
   let winner = null;
-
   let clickCount = 0;
 
   for (let j = 0; j < length; j++) {
@@ -29,7 +23,6 @@ function checkWinner(i, squares, n) {
     }
     if (current.y === y) {
       hor++;
-      console.log("hor", hor)
 
     }
     if (current.x === current.y && x === y) {

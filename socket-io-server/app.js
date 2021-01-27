@@ -1,12 +1,9 @@
 const express = require("express");
 const http = require("http");
-
-
 const socketIo = require("socket.io");
 const { socketEvents, gameStatus } = require("./constants");
 const { checkWinner } = require("./routes/helpers/checkWinner");
 const createBoard = require("./routes/helpers/squares");
-
 const port = process.env.PORT || 3001;
 const index = require("./routes/index");
 const clickedSquare = require("./Sockets/clickedSquare");
@@ -16,12 +13,10 @@ const startGame = require("./Sockets/startGame");
 const openRoom = require("./Sockets/openRoom");
 const userExitedBoard = require("./Sockets/userExitedBoard");
 const playAgain = require("./Sockets/playAgain");
-
 const app = express();
 app.use(index);
 
 const server = http.createServer(app);
-
 const io = socketIo(server, {
   cors: {
     origin: "http://localhost:3000",
@@ -35,7 +30,7 @@ io.on("connection", (socket) => {
   console.log("connected");
 
   socket.on(socketEvents.userExitedBoard, (data) => userExitedBoard(socket, data));
-  socket.on(socketEvents.playAgain, (data) => playAgain(socket, data));
+  socket.on(socketEvents.playAgain, (data, callBack) => playAgain(socket, data, callBack));
   socket.on(socketEvents.createRoom, (data, callBack) => createRoom(socket, data, callBack));
   socket.on(socketEvents.openRoom, (data, callBack) => openRoom(socket, data, callBack));
   socket.on(socketEvents.startGame, (data, callBack) => startGame(socket, data, callBack));

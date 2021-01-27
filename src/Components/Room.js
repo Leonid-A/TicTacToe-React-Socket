@@ -5,10 +5,10 @@ function Room(props) {
     <div className={classes.room} onClick={props.click}>
       <p>Room ID {props.id}</p>
       <p>
-        Player1---: {props.player1 ? props.player1.userName : props.player1}
+        Player1: {props.player1 ? props.player1.userName : props.player1}
       </p>
       <p>
-        Player2----: {props.player2 ? props.player2.userName : props.player2}
+        Player2: {props.player2 ? props.player2.userName : props.player2}
       </p>
       <p>{props.status}</p>
     </div>

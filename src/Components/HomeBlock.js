@@ -72,7 +72,7 @@ function HomeBlock() {
     });
 
     return () => {};
-  }, []);  // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!rooms.length && !filteredSize) {
@@ -105,7 +105,7 @@ function HomeBlock() {
     });
 
     return () => removeListeners();
-  }, [rooms]);   // eslint-disable-line react-hooks/exhaustive-deps
+  }, [rooms]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const removeListeners = () => {
     appSocket.removeAllListeners(socketEvents.roomIsMade);

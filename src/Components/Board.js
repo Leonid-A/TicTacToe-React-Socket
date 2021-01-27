@@ -13,6 +13,8 @@ function Board(props) {
     player2: gameData.player2,
   });
   const [gameStarted, SetGameStarted] = useState(false);
+  const [buttonStyle, setButtonStyle] = useState("");
+  // const { size, id } = useParams();
 
   useEffect(() => {
     appSocket.on(socketEvents.gameUpdated, (res) => {
@@ -36,9 +38,17 @@ function Board(props) {
       }
     });
 
+    appSocket.on(socketEvents.playAgain, (res) => {
+      if (res.status === "playing") {
+        setSquares(res.squares);
+        setStatus(null);
+      }
+    });
+
     appSocket.on(socketEvents.clickedSquare, (res) => {
       if (res.winner) {
         setStatus(res.winner);
+        setButtonStyle("");
       }
       setSquares(res.squares);
     });
@@ -46,6 +56,7 @@ function Board(props) {
     return () => {
       appSocket.removeAllListeners(socketEvents.userEntered);
       appSocket.removeAllListeners(socketEvents.startGame);
+      appSocket.removeAllListeners(socketEvents.playAgain);
       appSocket.removeAllListeners(socketEvents.gameUpdated);
       appSocket.removeAllListeners(socketEvents.clickedSquare);
       appSocket.emit(socketEvents.userExitedBoard, {
@@ -54,8 +65,6 @@ function Board(props) {
       });
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // const { size, id } = useParams();
 
   const renderSquare = (i) => {
     return (
@@ -76,6 +85,7 @@ function Board(props) {
     appSocket.emit(socketEvents.clickedSquare, data, (res) => {
       if (res.winner) {
         setStatus(res.winner);
+        setButtonStyle("");
       }
       setSquares(res.squares);
     });
@@ -83,7 +93,7 @@ function Board(props) {
 
   const startButtonClick = (data) => {
     if (!gameStarted) {
-      data.target.classList.add("passive");
+      setButtonStyle("passive");
       const body = { id: gameData._id, type: playerType };
       appSocket.emit(socketEvents.startGame, body, (game) => {
         if (game.status === "playing") {
@@ -92,9 +102,15 @@ function Board(props) {
       });
     }
   };
-  const resetGame = () => {
-    appSocket.emit(socketEvents.playAgain, gameData._id, (game) => {
-      console.log(game);
+
+  const playAgain = (data) => {
+    const body = { id: gameData._id, type: playerType };
+    setButtonStyle("passive");
+    appSocket.emit(socketEvents.playAgain, body, (game) => {
+      if (game.status === "playing") {
+        setSquares(game.squares);
+        setStatus(null);
+      }
     });
   };
 
@@ -103,27 +119,37 @@ function Board(props) {
     height: 50 * gameData.size + "px",
   };
 
+  let btn = null;
+  if (status) {
+    btn = (
+      <button id="playAgain" className={buttonStyle} onClick={playAgain}>
+        Play Again
+      </button>
+    );
+  } else if (players.player1 && players.player2) {
+    btn = (
+      <button
+        id="startButton"
+        className={buttonStyle}
+        onClick={startButtonClick}
+      >
+        START
+      </button>
+    );
+  }
+
   return (
     <>
       <div>
-        <p>Player1+: {players.player1 ? players.player1.userName : null}</p>
-        <p>Player2+: {players.player2 ? players.player2.userName : null}</p>
+        <p>Player1: {players.player1 ? players.player1.userName : null}</p>
+        <p>Player2: {players.player2 ? players.player2.userName : null}</p>
       </div>
       <div style={style} className="game-block">
         {squares.map((item, index) => renderSquare(index))}
       </div>
       <div className="buttonsBlock">
         <p id="info">{status ? `${status} is Win` : status}</p>
-
-        {status ? (
-          <button className="button" onClick={resetGame}>
-            RESET GAME
-          </button>
-        ) : players.player1 && players.player2 ? (
-          <button id="startButton" onClick={startButtonClick}>
-            START
-          </button>
-        ) : null}
+        {btn}
       </div>
     </>
   );

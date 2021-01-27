@@ -37,9 +37,15 @@ body {
   color: red
 }
 
-.button{
+#playAgain{
   background-color: red;
   cursor: pointer;
+}
+
+#playAgain.passive{
+  background-color: gray;
+  cursor: none;
+  pointer-events: none;
 }
 
 #startButton{

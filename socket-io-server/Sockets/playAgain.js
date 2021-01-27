@@ -1,49 +1,62 @@
 const {
-    dbClient,
-    dbName,
-    mongodb,
-    gameStatus,
-    socketEvents,
-  } = require("../constants");
-  const createBoard = require("../routes/helpers/squares");
-  
-  function playAgain(socket, data) {
-    dbClient.connect(async (err, client) => {
-      const db = client.db(dbName);
-      const roomsCol = db.collection("rooms");
-      const findID = { _id: new mongodb.ObjectId(data.id) };
-      const gameData = await roomsCol.findOne(findID);
-  
-    //   if (gameData.player1 && gameData.player2) {
-    //     const updatedObj = {};
-    //     if (gameData.player1.userName == data.userName) {
-    //       updatedObj.player1 = null;
-    //       gameData.player1 = null;
-    //     } else {
-    //       updatedObj.player2 = null;
-    //       gameData.player2 = null;
-    //     }
-    //     const squares = createBoard(gameData.size);
-    //     gameData.xIsNext = true;
-    //     updatedObj.xIsNext = true;
-    //     updatedObj.status = gameStatus.waiting;
-    //     updatedObj.squares = squares;
-    //     gameData.status = gameStatus.waiting;
-    //     gameData.squares = squares;
-  
-    //     roomsCol
-    //       .updateOne(findID, {
-    //         $set: updatedObj,
-    //       })
-    //       .then(() => {
-    //         socket.broadcast.emit(socketEvents.gameUpdated, gameData);
-    //       });
-    //   } else {
-    //     roomsCol.deleteOne(findID);
-    //     socket.broadcast.emit(socketEvents.gameDeleted, data.id);
-    //   }
-    });
-  }
-  
-  module.exports = playAgain;
-  
+  dbClient,
+  dbName,
+  mongodb,
+  gameStatus,
+  socketEvents,
+} = require("../constants");
+const createBoard = require("../routes/helpers/squares");
+
+function playAgain(socket, data, callBack) {
+  dbClient.connect(async (err, client) => {
+    const db = client.db(dbName);
+    const roomsCol = db.collection("rooms");
+    const findID = { _id: new mongodb.ObjectId(data.id) };
+    const gameData = await roomsCol.findOne(findID);
+    let updatedObj = {};
+    if (gameData.player1.type === data.type && !gameData.player1.playAgain) {
+      gameData.player1.playAgain = true;
+      updatedObj.player1 = {
+        userName: gameData.player1.userName,
+        type: gameData.player1.type,
+        startGame: gameData.player1.startGame,
+        playAgain: gameData.player1.playAgain,
+      };
+      gameData;
+    } else if (
+      gameData.player2.type === data.type &&
+      !gameData.player2.playAgain
+    ) {
+      gameData.player2.playAgain = true;
+      updatedObj.player2 = {
+        userName: gameData.player2.userName,
+        type: gameData.player2.type,
+        startGame: gameData.player2.startGame,
+        playAgain: gameData.player2.playAgain,
+      };
+    } else {
+      return;
+    }
+    if (gameData.player1.playAgain && gameData.player2.playAgain) {
+      gameData.status = gameStatus.playing;
+      gameData.xIsNext = true;
+      gameData.squares = createBoard(gameData.size);
+      updatedObj = gameData;
+      updatedObj.player1.playAgain = false;
+      updatedObj.player2.playAgain = false;
+      socket.broadcast.emit(socketEvents.gameUpdated, gameData);
+    }
+    try {
+      socket.to(data.id).emit(socketEvents.playAgain, gameData);
+      callBack(gameData);
+      await roomsCol.updateOne(findID, {
+        $set: updatedObj,
+      });
+    } catch (error) {
+      console.log("something went wrong");
+      console.log(error);
+    }
+  });
+}
+
+module.exports = playAgain;

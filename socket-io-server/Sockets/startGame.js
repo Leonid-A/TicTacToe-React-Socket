@@ -16,18 +16,26 @@ function startGame(socket, data, callBack) {
       const updatedObj = {};
       if (gameData.player1.type === data.type && !gameData.player1.startGame) {
         gameData.player1.startGame = true;
+        gameData.player1.playAgain = false;
+
         updatedObj.player1 = {
           userName: gameData.player1.userName,
           type: gameData.player1.type,
           startGame: gameData.player1.startGame,
+          playAgain: gameData.player1.playAgain,
         };
         gameData;
-      } else if (gameData.player2.type === data.type && !gameData.player2.startGame) {
+      } else if (
+        gameData.player2.type === data.type &&
+        !gameData.player2.startGame
+      ) {
         gameData.player2.startGame = true;
+        gameData.player2.playAgain = false;
         updatedObj.player2 = {
           userName: gameData.player2.userName,
           type: gameData.player2.type,
           startGame: gameData.player2.startGame,
+          playAgain: gameData.player2.playAgain,
         };
       } else {
         return;
